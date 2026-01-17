@@ -1,6 +1,27 @@
+import './Login.scss'
+
 function Login() {
-    return (<div className="login-container">
-        <button>Login</button>
+    return (<div className="login-container mt-3">
+        <div className="container">
+            <div className="row">
+                <div className="content-left col-7">
+                    <div className='brand'>
+                        BRAND
+                    </div>
+                    <div className='detail'>
+                        BRAND is website for ...
+                    </div>
+                </div>
+                <div className="content-right col-5 d-flex flex-column gap-3 py-3">
+                    <input type='text' className='form-control' placeholder='Email Address or phone number'/>
+                    <input type='text' className='form-control' placeholder='Password'/>
+                    <button className='btn btn-primary'>Login</button>
+                    <span className='text-center'>Forgot your password?</span>
+                    <hr/>
+                    <button className='btn btn-success'>Create new account</button>
+                </div>
+            </div>
+        </div>
     </div>  );
 }
 
