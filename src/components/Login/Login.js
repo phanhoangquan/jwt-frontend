@@ -23,7 +23,7 @@ function Login() {
                     <button className='btn btn-primary'>Login</button>
                     <span className='text-center'><Link className='forgot-password' href='#'>Forgot your password?</Link></span>
                     <hr/>
-                    <button className='btn btn-success'><Link to="/register" style={{'text-decoration': 'none','color':'white'}}>Create new account</Link></button>
+                    <button className='btn btn-success'><Link to="/register" style={{'textDecoration': 'none','color':'white'}}>Create new account</Link></button>
                 </div>
             </div>
         </div>

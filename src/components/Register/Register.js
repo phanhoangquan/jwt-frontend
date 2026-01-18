@@ -1,7 +1,17 @@
 import { Link } from 'react-router-dom';
 import './Register.scss'
+import { useEffect } from 'react';
+import axios from 'axios';
 
 function Register() {
+
+    useEffect(()=>{
+        axios.get('https://dummyjson.com/ip')
+        .then(data =>{
+            console.log(data);
+        })
+    },[])
+
     return (<div className="register-container">
         <div className="container">
             <div className="row px-3 px-sm-0">
@@ -36,7 +46,7 @@ function Register() {
                     </div>
                     <button className='btn btn-primary'>Register</button>
                     <hr/>
-                    <button className='btn btn-success'><Link to="/login" style={{'text-decoration': 'none','color':'white'}}>Already've an account . Login </Link></button>
+                    <button className='btn btn-success'><Link to="/login" style={{'textDecoration': 'none','color':'white'}}>Already've an account . Login </Link></button>
                 </div>
             </div>
         </div>
