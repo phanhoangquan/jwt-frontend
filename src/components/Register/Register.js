@@ -6,7 +6,7 @@ import axios from 'axios';
 function Register() {
 
     useEffect(()=>{
-        axios.get('https://dummyjson.com/ip')
+        axios.get('http://localhost:8080/api/test-api')
         .then(data =>{
             console.log(data);
         })
