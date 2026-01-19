@@ -1,16 +1,27 @@
 import { Link } from 'react-router-dom';
 import './Register.scss'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 function Register() {
+    
+    const [email,setEmail] = useState('')
+    const [phone,setPhone] = useState('')
+    const [username,setUsername] = useState('')
+    const [password,setPassword] = useState('')
+    const [confirmPassword,setconfirmPassword] = useState('')
 
-    useEffect(()=>{
-        axios.get('http://localhost:8080/api/test-api')
-        .then(data =>{
-            console.log(data);
-        })
-    },[])
+    const handleRegister = ()=>{
+        let userData = { email , phone, username, password, confirmPassword }
+        console.log(userData);
+    }
+
+    // useEffect(()=>{
+    //     axios.get('http://localhost:8080/api/test-api')
+    //     .then(data =>{
+    //         console.log(data);
+    //     })
+    // },[])
 
     return (<div className="register-container">
         <div className="container">
@@ -30,21 +41,25 @@ function Register() {
                     </div>
                     <div className='form-group'>
                         <label>Email:</label>
-                        <input type='text' className='form-control' placeholder='Email Address'/>
+                        <input type='text' className='form-control' placeholder='Email Address' value={email} onChange={(e)=>{setEmail(e.target.value)}}/>
                     </div>
                     <div className='form-group'>
                         <label>Phone number:</label>
-                        <input type='text' className='form-control' placeholder='Phone number'/>
+                        <input type='text' className='form-control' placeholder='Phone number'value={phone} onChange={(e)=>{setPhone(e.target.value)}}/>
+                    </div>
+                    <div className='form-group'>
+                        <label>Username:</label>
+                        <input type='text' className='form-control' placeholder='Username'value={username} onChange={(e)=>{setUsername(e.target.value)}}/>
                     </div>
                     <div className='form-group'>
                         <label>Password:</label>
-                        <input type='text' className='form-control' placeholder='Password'/>
+                        <input type='text' className='form-control' placeholder='Password' value={password} onChange={(e)=>{setPassword(e.target.value)}}/>
                     </div>
                     <div className='form-group'>
                         <label>Re-enter Password:</label>
-                        <input type='text' className='form-control' placeholder='Password'/>
+                        <input type='text' className='form-control' placeholder='Password' value={confirmPassword} onChange={(e)=>{setconfirmPassword(e.target.value)}}/>
                     </div>
-                    <button className='btn btn-primary'>Register</button>
+                    <button className='btn btn-primary' onClick={()=>{handleRegister()}}>Register</button>
                     <hr/>
                     <button className='btn btn-success'><Link to="/login" style={{'textDecoration': 'none','color':'white'}}>Already've an account . Login </Link></button>
                 </div>
