@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import './Register.scss';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { registerNewUser } from '../../services/userServices';
 import axios from 'axios';
 
 function Register() {
@@ -10,6 +11,7 @@ function Register() {
    const [username, setUsername] = useState('');
    const [password, setPassword] = useState('');
    const [confirmPassword, setconfirmPassword] = useState('');
+
    const objValidInputs = {
       email: true,
       phone: true,
@@ -56,10 +58,18 @@ function Register() {
       return true;
    };
 
-   const handleRegister = () => {
+   const handleRegister = async () => {
       let isValid = isValidInputs();
       if (isValid) {
-         axios.post('http://localhost:8080/api/v1/register', { email, username, phone, password });
+         //call api register
+         let response = await registerNewUser(email, username, phone, password);
+         console.log('>>> check response register: ', response);
+         let serverData = response && response.data ? response.data : null;
+         if (serverData && +serverData.EC === 0) {
+            toast.success(serverData.EM);
+         } else {
+            toast.error(serverData.EM);
+         }
       }
    };
 
