@@ -38,10 +38,17 @@ function Login() {
          };
          sessionStorage.setItem('account', JSON.stringify(data));
          navigate('/users');
+         window.location.reload();
       }
       if (response && response.data && +response.data.EC !== 0) {
          //error
          toast.error(response.data.EM);
+      }
+   };
+
+   const handlePressEnter = (e) => {
+      if (e.code === 'Enter') {
+         handleLogin();
       }
    };
 
@@ -69,6 +76,9 @@ function Login() {
                      placeholder="Password"
                      value={password}
                      onChange={(e) => setPassword(e.target.value)}
+                     onKeyDown={(e) => {
+                        handlePressEnter(e);
+                     }}
                   />
                   <button
                      className="btn btn-primary"
