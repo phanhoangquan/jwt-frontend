@@ -3,10 +3,13 @@ import './Login.scss';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { loginUser } from '../../services/userServices';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
    const [valueLogin, setValueLogin] = useState('');
    const [password, setPassword] = useState('');
+
+   const navigate = useNavigate();
 
    const defaultobjValidInputs = {
       valueLogin: true,
@@ -26,7 +29,20 @@ function Login() {
          toast.error('Password is required');
          return;
       }
-      await loginUser(valueLogin, password);
+      let response = await loginUser(valueLogin, password);
+
+      if (response && response.data && +response.data.EC === 0) {
+         let data = {
+            isAuthenticated: true,
+            token: 'fake token',
+         };
+         sessionStorage.setItem('account', JSON.stringify(data));
+         navigate('/users');
+      }
+      if (response && response.data && +response.data.EC !== 0) {
+         //error
+         toast.error(response.data.EM);
+      }
    };
 
    return (
