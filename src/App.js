@@ -1,16 +1,13 @@
 import './App.scss';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Bounce } from 'react-toastify';
-import Home from './pages/Home/Home';
-
 import Nav from './components/Navigation/Nav';
-import Login from './components/Login/Login';
-import Register from './components/Register/Register';
-import Users from './components/ManageUsers/Users';
 import { useEffect, useState } from 'react';
 import _ from 'lodash';
+
+import AppRoutes from './routes/AppRoutes';
 
 function App() {
    const [account, setAccount] = useState({});
@@ -23,19 +20,10 @@ function App() {
    }, []);
 
    return (
-      <div className="app-container">
-         <BrowserRouter>
-            {account && !_.isEmpty(account) && account.isAuthenticated && <Nav />}
-            <Routes>
-               <Route path="/" element={<Home />} />
-               <Route path="/login" element={<Login />} />
-               <Route path="/register" element={<Register />} />
-               <Route path="/users" element={<Users />} />
-               {/* <Route path="/news" element={<News />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} /> */}
-               {/* <Route path="*"><h1>404 Not Found!</h1></Route> */}
-            </Routes>
+      <BrowserRouter>
+         <div className="app-header">{account && !_.isEmpty(account) && account.isAuthenticated && <Nav />}</div>
+         <div className="app-container">
+            <AppRoutes />
             <ToastContainer
                position="top-right"
                autoClose={5000}
@@ -49,8 +37,8 @@ function App() {
                theme="light"
                transition={Bounce}
             />
-         </BrowserRouter>
-      </div>
+         </div>
+      </BrowserRouter>
    );
 }
 export default App;
