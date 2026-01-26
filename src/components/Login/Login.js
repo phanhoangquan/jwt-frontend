@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './Login.scss';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -51,6 +51,13 @@ function Login() {
          handleLogin();
       }
    };
+
+   useEffect(() => {
+      let session = sessionStorage.getItem('account');
+      if (session) {
+         navigate('/');
+      }
+   }, []);
 
    return (
       <div className="login-container">

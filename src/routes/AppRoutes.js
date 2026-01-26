@@ -18,6 +18,14 @@ function AppRoutes(props) {
                   </PrivateRoutes>
                }
             />
+            <Route
+               path="/projects"
+               element={
+                  <PrivateRoutes>
+                     <Users />
+                  </PrivateRoutes>
+               }
+            />
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
