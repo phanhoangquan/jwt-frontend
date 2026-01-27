@@ -57,7 +57,7 @@ function Login() {
       if (session) {
          navigate('/');
       }
-   }, []);
+   }, [navigate]);
 
    return (
       <div className="login-container">
