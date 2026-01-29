@@ -3,7 +3,6 @@ import './Register.scss';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { registerNewUser } from '../../services/userServices';
-import axios from 'axios';
 
 function Register() {
    const [email, setEmail] = useState('');
