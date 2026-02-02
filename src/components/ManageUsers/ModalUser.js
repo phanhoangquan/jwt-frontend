@@ -3,11 +3,11 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { toast } from 'react-toastify';
-import { fetchAllGroups } from '../../services/userServices';
+import { fetchAllGroups, createNewUser } from '../../services/userServices';
 import _ from 'lodash';
 
 function ModalUser(props) {
-   const [show, setShow] = useState(true);
+   const { showModalUser, setShowModalUser } = props;
    const [groups, setGroups] = useState([]);
 
    const defaultUserData = {
@@ -21,20 +21,20 @@ function ModalUser(props) {
    };
 
    const validInputsDefault = {
-      validEmail: true,
-      validPhone: true,
-      validUsername: true,
-      validPassword: true,
-      validAddress: true,
-      validSex: true,
-      validGroup: true,
+      email: true,
+      phone: true,
+      username: true,
+      password: true,
+      address: true,
+      sex: true,
+      group: true,
    };
 
    const [userData, setUserData] = useState(defaultUserData);
    const [validInputs, setValidInputs] = useState(validInputsDefault);
 
-   const handleClose = () => setShow(false);
-   const handleShow = () => setShow(true);
+   const handleClose = () => setShowModalUser(false);
+   const handleShow = () => setShowModalUser(true);
 
    useEffect(() => {
       getGroups();
@@ -44,6 +44,10 @@ function ModalUser(props) {
       let response = await fetchAllGroups();
       if (response && response.data && +response.data.EC === 0) {
          setGroups(response.data.DT);
+         if (response.data.DT && response.data.DT.length > 0) {
+            let groups = response.data.DT;
+            setUserData({ ...userData, group: groups[0].id });
+         }
       } else {
          toast.error(response.data.EM);
       }
@@ -55,13 +59,44 @@ function ModalUser(props) {
       setUserData(_userData);
    };
 
+   const checkValidInputs = () => {
+      setValidInputs(validInputsDefault);
+      let arr = ['email', 'phone', 'username', 'password', 'group'];
+      let check = true;
+      for (let i = 0; i < arr.length; i++) {
+         if (!userData[arr[i]]) {
+            toast.error(`Empty in ${arr[i]}`);
+            let _validInputs = _.cloneDeep(validInputsDefault);
+            _validInputs[arr[i]] = false;
+            setValidInputs(_validInputs);
+            check = false;
+            break;
+         }
+      }
+      return check;
+   };
+
+   const handleConfirmUser = async () => {
+      let check = checkValidInputs();
+      if (check) {
+         let response = await createNewUser({ ...userData, groupId: userData['group'] });
+         if (response.data && +response.data.EC === 0) {
+            toast.success(response.data.EM);
+            handleClose();
+            setUserData({ ...userData, group: groups[0].id });
+         } else {
+            toast.error('Error create user');
+         }
+      }
+   };
+
    return (
       <>
          <Button variant="primary" onClick={handleShow}>
             Launch demo modal
          </Button>
 
-         <Modal show={show} onHide={handleClose}>
+         <Modal show={showModalUser} onHide={handleClose}>
             <Modal.Header closeButton>
                <Modal.Title>{props.title}</Modal.Title>
             </Modal.Header>
@@ -70,7 +105,7 @@ function ModalUser(props) {
                   <Form.Group className="mb-3 col-5" controlId="exampleForm.ControlInput1">
                      <Form.Label>Email address</Form.Label>
                      <Form.Control
-                        className={validInputs.validEmail ? '' : 'is-invalid'}
+                        className={validInputs.email ? 'form-control' : 'form-control is-invalid'}
                         type="email"
                         placeholder="name@example.com"
                         autoFocus
@@ -81,7 +116,7 @@ function ModalUser(props) {
                   <Form.Group className="mb-3 col-5" controlId="exampleForm.ControlInput2">
                      <Form.Label>Username</Form.Label>
                      <Form.Control
-                        className={validInputs.validUsername ? '' : 'is-invalid'}
+                        className={validInputs.username ? 'form-control' : 'form-control is-invalid'}
                         type="text"
                         placeholder="username ..."
                         autoFocus
@@ -92,7 +127,7 @@ function ModalUser(props) {
                   <Form.Group className="mb-3 col-5" controlId="exampleForm.ControlInput3">
                      <Form.Label>Phone number</Form.Label>
                      <Form.Control
-                        className={validInputs.validPhone ? '' : 'is-invalid'}
+                        className={validInputs.phone ? 'form-control' : 'form-control is-invalid'}
                         type="text"
                         placeholder="(+83)37222..."
                         autoFocus
@@ -103,7 +138,7 @@ function ModalUser(props) {
                   <Form.Group className="mb-3 col-5" controlId="exampleForm.ControlInput4">
                      <Form.Label>Password</Form.Label>
                      <Form.Control
-                        className={validInputs.validPassword ? '' : 'is-invalid'}
+                        className={validInputs.password ? 'form-control' : 'form-control is-invalid'}
                         type="text"
                         placeholder="Password.."
                         autoFocus
@@ -114,12 +149,12 @@ function ModalUser(props) {
                   <Form.Group className="mb-3 col-11" controlId="exampleForm.ControlInput5">
                      <Form.Label>Address</Form.Label>
                      <Form.Control
-                        className={validInputs.validAddress ? '' : 'is-invalid'}
+                        className={validInputs.address ? 'form-control' : 'form-control is-invalid'}
                         type="text"
                         placeholder="Address"
                         autoFocus
                         value={userData.address}
-                        onChange={(e) => handleOnChangeInput(e.target.value, 'addresss')}
+                        onChange={(e) => handleOnChangeInput(e.target.value, 'address')}
                      />
                   </Form.Group>
                   <Form.Group className="mb-3 col-5" controlId="exampleForm.ControlInput6">
@@ -132,7 +167,11 @@ function ModalUser(props) {
                   </Form.Group>
                   <Form.Group className="mb-3 col-5" controlId="exampleForm.ControlInput7">
                      <Form.Label>Group</Form.Label>
-                     <Form.Select aria-label="Group" onChange={(e) => handleOnChangeInput(e.target.value, 'group')}>
+                     <Form.Select
+                        className={validInputs.group ? 'form-select' : 'form-select is-invalid'}
+                        aria-label="Group"
+                        onChange={(e) => handleOnChangeInput(e.target.value, 'group')}
+                     >
                         {groups.length > 0 &&
                            groups.map((groups, index) => (
                               <option key={`group-${index}`} value={groups.id}>
@@ -147,7 +186,7 @@ function ModalUser(props) {
                <Button variant="secondary" onClick={handleClose}>
                   Close
                </Button>
-               <Button variant="primary" onClick={handleClose}>
+               <Button variant="primary" onClick={handleConfirmUser}>
                   Save Changes
                </Button>
             </Modal.Footer>

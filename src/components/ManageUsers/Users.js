@@ -12,6 +12,7 @@ function Users(props) {
    const [currentLimit, setCurrentLimit] = useState(3);
    const [totalPages, setTotalPages] = useState(0);
    const [showModalDelete, setShowModalDelete] = useState(false);
+   const [showModalUser, setShowModalUser] = useState(false);
    const [dataModal, setDataModal] = useState({});
 
    useEffect(() => {
@@ -52,6 +53,10 @@ function Users(props) {
       setShowModalDelete(true);
    };
 
+   const handleOpenModalCreateUser = () => {
+      setShowModalUser(true);
+   };
+
    return (
       <>
          <div className="manage-users-container">
@@ -61,7 +66,9 @@ function Users(props) {
                </div>
                <div className="action">
                   <button className="btn btn-success">Refesh</button>
-                  <button className="btn btn-primary">Add New user</button>
+                  <button className="btn btn-primary" onClick={() => handleOpenModalCreateUser()}>
+                     Create New user
+                  </button>
                </div>
             </div>
             <div className="user-body">
@@ -139,7 +146,7 @@ function Users(props) {
             handleConfirm={handleDelete}
             data={dataModal}
          />
-         <ModalUser title={'Create new user'} />
+         <ModalUser title={'Create new user'} showModalUser={showModalUser} setShowModalUser={setShowModalUser} />
       </>
    );
 }

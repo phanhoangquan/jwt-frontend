@@ -16,6 +16,9 @@ export const deleteUser = (user) => {
    return axios.delete(`http://localhost:8080/api/v1/users/delete`, { data: { id: user.id } });
 };
 
+export const createNewUser = (userData) => {
+   return axios.post(`http://localhost:8080/api/v1/users/create`, { ...userData });
+};
 export const fetchAllGroups = () => {
    return axios.get(`http://localhost:8080/api/v1/group/read`);
 };
