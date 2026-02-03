@@ -84,8 +84,11 @@ function ModalUser(props) {
             toast.success(response.data.EM);
             handleClose();
             setUserData({ ...userData, group: groups[0].id });
-         } else {
-            toast.error('Error create user');
+         } else if (response.data && response.data.EC !== 0) {
+            toast.error(response.data.EM);
+            let _validInputs = _.cloneDeep(validInputsDefault);
+            _validInputs[response.data.DT] = false;
+            setValidInputs(_validInputs);
          }
       }
    };
@@ -98,7 +101,7 @@ function ModalUser(props) {
 
          <Modal show={showModalUser} onHide={handleClose}>
             <Modal.Header closeButton>
-               <Modal.Title>{props.title}</Modal.Title>
+               <Modal.Title>{props.action === 'CREATE' ? 'Create New User' : 'Edit a User'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                <Form className="d-flex flex-wrap justify-content-around">

@@ -14,6 +14,7 @@ function Users(props) {
    const [showModalDelete, setShowModalDelete] = useState(false);
    const [showModalUser, setShowModalUser] = useState(false);
    const [dataModal, setDataModal] = useState({});
+   const [actionModalUser, setActionModalUser] = useState('CREATE');
 
    useEffect(() => {
       fetchUsers();
@@ -88,7 +89,7 @@ function Users(props) {
                      {listUsers && listUsers.length > 0 ? (
                         listUsers.map((user, index) => (
                            <tr key={`row-${index}`}>
-                              <th scope="row">{index + 1}</th>
+                              <th scope="row">{(currentPage - 1) * currentLimit + index + 1}</th>
                               <td>{user.id}</td>
                               <td>{user.email}</td>
                               <td>{user.username}</td>
@@ -146,7 +147,7 @@ function Users(props) {
             handleConfirm={handleDelete}
             data={dataModal}
          />
-         <ModalUser title={'Create new user'} showModalUser={showModalUser} setShowModalUser={setShowModalUser} />
+         <ModalUser showModalUser={showModalUser} setShowModalUser={setShowModalUser} action={actionModalUser} />
       </>
    );
 }
