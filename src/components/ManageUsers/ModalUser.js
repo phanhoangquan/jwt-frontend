@@ -7,7 +7,7 @@ import { fetchAllGroups, createNewUser } from '../../services/userServices';
 import _ from 'lodash';
 
 function ModalUser(props) {
-   const { showModalUser, setShowModalUser } = props;
+   const { showModalUser, setShowModalUser, action, dataModal } = props;
    const [groups, setGroups] = useState([]);
 
    const defaultUserData = {
@@ -33,12 +33,24 @@ function ModalUser(props) {
    const [userData, setUserData] = useState(defaultUserData);
    const [validInputs, setValidInputs] = useState(validInputsDefault);
 
-   const handleClose = () => setShowModalUser(false);
+   const handleClose = () => {
+      setShowModalUser(false);
+      setValidInputs(validInputsDefault);
+   };
    const handleShow = () => setShowModalUser(true);
 
+   console.log(userData);
    useEffect(() => {
       getGroups();
    }, []);
+
+   useEffect(() => {
+      if (action === 'UPDATE') {
+         setUserData({ ...dataModal, group: dataModal.Group ? dataModal.Group.id : '' });
+      } else {
+         setUserData(defaultUserData);
+      }
+   }, [dataModal]);
 
    const getGroups = async () => {
       let response = await fetchAllGroups();
@@ -84,6 +96,7 @@ function ModalUser(props) {
             toast.success(response.data.EM);
             handleClose();
             setUserData({ ...userData, group: groups[0].id });
+            await props.fetchUsers();
          } else if (response.data && response.data.EC !== 0) {
             toast.error(response.data.EM);
             let _validInputs = _.cloneDeep(validInputsDefault);
@@ -104,10 +117,11 @@ function ModalUser(props) {
                <Modal.Title>{props.action === 'CREATE' ? 'Create New User' : 'Edit a User'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-               <Form className="d-flex flex-wrap justify-content-around">
-                  <Form.Group className="mb-3 col-5" controlId="exampleForm.ControlInput1">
+               <Form className="row g-3">
+                  <Form.Group className="mb-3 col-6" controlId="exampleForm.ControlInput1">
                      <Form.Label>Email address</Form.Label>
                      <Form.Control
+                        disabled={action === 'CREATE' ? false : true}
                         className={validInputs.email ? 'form-control' : 'form-control is-invalid'}
                         type="email"
                         placeholder="name@example.com"
@@ -116,7 +130,21 @@ function ModalUser(props) {
                         onChange={(e) => handleOnChangeInput(e.target.value, 'email')}
                      />
                   </Form.Group>
-                  <Form.Group className="mb-3 col-5" controlId="exampleForm.ControlInput2">
+
+                  <Form.Group className="mb-3 col-6" controlId="exampleForm.ControlInput3">
+                     <Form.Label>Phone number</Form.Label>
+                     <Form.Control
+                        disabled={action === 'CREATE' ? false : true}
+                        className={validInputs.phone ? 'form-control' : 'form-control is-invalid'}
+                        type="text"
+                        placeholder="(+83)37222..."
+                        autoFocus
+                        value={userData.phone}
+                        onChange={(e) => handleOnChangeInput(e.target.value, 'phone')}
+                     />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3 col-6" controlId="exampleForm.ControlInput2">
                      <Form.Label>Username</Form.Label>
                      <Form.Control
                         className={validInputs.username ? 'form-control' : 'form-control is-invalid'}
@@ -127,29 +155,21 @@ function ModalUser(props) {
                         onChange={(e) => handleOnChangeInput(e.target.value, 'username')}
                      />
                   </Form.Group>
-                  <Form.Group className="mb-3 col-5" controlId="exampleForm.ControlInput3">
-                     <Form.Label>Phone number</Form.Label>
-                     <Form.Control
-                        className={validInputs.phone ? 'form-control' : 'form-control is-invalid'}
-                        type="text"
-                        placeholder="(+83)37222..."
-                        autoFocus
-                        value={userData.phone}
-                        onChange={(e) => handleOnChangeInput(e.target.value, 'phone')}
-                     />
-                  </Form.Group>
-                  <Form.Group className="mb-3 col-5" controlId="exampleForm.ControlInput4">
-                     <Form.Label>Password</Form.Label>
-                     <Form.Control
-                        className={validInputs.password ? 'form-control' : 'form-control is-invalid'}
-                        type="text"
-                        placeholder="Password.."
-                        autoFocus
-                        value={userData.password}
-                        onChange={(e) => handleOnChangeInput(e.target.value, 'password')}
-                     />
-                  </Form.Group>
-                  <Form.Group className="mb-3 col-11" controlId="exampleForm.ControlInput5">
+
+                  {action === 'CREATE' && (
+                     <Form.Group className="mb-3 col-6" controlId="exampleForm.ControlInput4">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control
+                           className={validInputs.password ? 'form-control' : 'form-control is-invalid'}
+                           type="text"
+                           placeholder="Password.."
+                           autoFocus
+                           value={userData.password}
+                           onChange={(e) => handleOnChangeInput(e.target.value, 'password')}
+                        />
+                     </Form.Group>
+                  )}
+                  <Form.Group className="mb-3 col-12" controlId="exampleForm.ControlInput5">
                      <Form.Label>Address</Form.Label>
                      <Form.Control
                         className={validInputs.address ? 'form-control' : 'form-control is-invalid'}
@@ -160,20 +180,25 @@ function ModalUser(props) {
                         onChange={(e) => handleOnChangeInput(e.target.value, 'address')}
                      />
                   </Form.Group>
-                  <Form.Group className="mb-3 col-5" controlId="exampleForm.ControlInput6">
+                  <Form.Group className="mb-3 col-6" controlId="exampleForm.ControlInput6">
                      <Form.Label>Gender</Form.Label>
-                     <Form.Select aria-label="Gender" onChange={(e) => handleOnChangeInput(e.target.value, 'sex')}>
+                     <Form.Select
+                        aria-label="Gender"
+                        onChange={(e) => handleOnChangeInput(e.target.value, 'sex')}
+                        value={userData.sex}
+                     >
                         <option>Select Gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                      </Form.Select>
                   </Form.Group>
-                  <Form.Group className="mb-3 col-5" controlId="exampleForm.ControlInput7">
+                  <Form.Group className="mb-3 col-6" controlId="exampleForm.ControlInput7">
                      <Form.Label>Group</Form.Label>
                      <Form.Select
                         className={validInputs.group ? 'form-select' : 'form-select is-invalid'}
                         aria-label="Group"
                         onChange={(e) => handleOnChangeInput(e.target.value, 'group')}
+                        value={userData.group}
                      >
                         {groups.length > 0 &&
                            groups.map((groups, index) => (
@@ -190,7 +215,7 @@ function ModalUser(props) {
                   Close
                </Button>
                <Button variant="primary" onClick={handleConfirmUser}>
-                  Save Changes
+                  {action === 'CREATE' ? 'Save' : 'Update'}
                </Button>
             </Modal.Footer>
          </Modal>

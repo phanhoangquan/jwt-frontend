@@ -14,7 +14,7 @@ function Users(props) {
    const [showModalDelete, setShowModalDelete] = useState(false);
    const [showModalUser, setShowModalUser] = useState(false);
    const [dataModal, setDataModal] = useState({});
-   const [actionModalUser, setActionModalUser] = useState('CREATE');
+   const [actionModalUser, setActionModalUser] = useState('');
 
    useEffect(() => {
       fetchUsers();
@@ -54,8 +54,16 @@ function Users(props) {
       setShowModalDelete(true);
    };
 
-   const handleOpenModalCreateUser = () => {
-      setShowModalUser(true);
+   const handleOpenModalUser = (user) => {
+      if (user) {
+         setActionModalUser('UPDATE');
+         setDataModal(user);
+         setShowModalUser(true);
+      } else {
+         setActionModalUser('CREATE');
+         setDataModal({});
+         setShowModalUser(true);
+      }
    };
 
    return (
@@ -67,7 +75,7 @@ function Users(props) {
                </div>
                <div className="action">
                   <button className="btn btn-success">Refesh</button>
-                  <button className="btn btn-primary" onClick={() => handleOpenModalCreateUser()}>
+                  <button className="btn btn-primary" onClick={() => handleOpenModalUser()}>
                      Create New user
                   </button>
                </div>
@@ -77,7 +85,6 @@ function Users(props) {
                   <thead>
                      <tr>
                         <th scope="col">No</th>
-
                         <th scope="col">ID</th>
                         <th scope="col">Email</th>
                         <th scope="col">Username</th>
@@ -95,7 +102,14 @@ function Users(props) {
                               <td>{user.username}</td>
                               <td>{user.Group ? user.Group.name : ''}</td>
                               <td>
-                                 <button className="btn btn-warning mx-3">Edit</button>
+                                 <button
+                                    className="btn btn-warning mx-3"
+                                    onClick={() => {
+                                       handleOpenModalUser(user);
+                                    }}
+                                 >
+                                    Edit
+                                 </button>
                                  <button
                                     className="btn btn-danger"
                                     onClick={() => {
@@ -147,7 +161,13 @@ function Users(props) {
             handleConfirm={handleDelete}
             data={dataModal}
          />
-         <ModalUser showModalUser={showModalUser} setShowModalUser={setShowModalUser} action={actionModalUser} />
+         <ModalUser
+            showModalUser={showModalUser}
+            setShowModalUser={setShowModalUser}
+            action={actionModalUser}
+            dataModal={dataModal}
+            fetchUsers={fetchUsers}
+         />
       </>
    );
 }
