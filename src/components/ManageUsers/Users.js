@@ -66,108 +66,117 @@ function Users(props) {
       }
    };
 
+   const handleRefesh = async () => {
+      await fetchUsers;
+   };
+
    return (
       <>
-         <div className="manage-users-container">
-            <div className="user-header">
-               <div>
-                  <h3>Table Users</h3>
+         <div className="container">
+            <div className="manage-users-container mx-200">
+               <div className="user-header">
+                  <div className="ms-2 my-2">
+                     <h3>Manage Users</h3>
+                  </div>
+                  <div className="action my-3">
+                     <button className="btn btn-success mx-2 d-block-inline">
+                        <i className="fa fa-refresh pe-2" aria-hidden="true" onClick={() => handleRefesh()}></i>Refesh
+                     </button>
+                     <button className="btn btn-primary d-block-inline" onClick={() => handleOpenModalUser()}>
+                        <i className="fa fa-plus-circle pe-2"></i>
+                        Create New user
+                     </button>
+                  </div>
                </div>
-               <div className="action">
-                  <button className="btn btn-success">Refesh</button>
-                  <button className="btn btn-primary" onClick={() => handleOpenModalUser()}>
-                     Create New user
-                  </button>
-               </div>
-            </div>
-            <div className="user-body">
-               <table className="table table-bordered table-hover">
-                  <thead>
-                     <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">ID</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Username</th>
-                        <th scope="col">Group</th>
-                        <th scope="col">Actions</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     {listUsers && listUsers.length > 0 ? (
-                        listUsers.map((user, index) => (
-                           <tr key={`row-${index}`}>
-                              <th scope="row">{(currentPage - 1) * currentLimit + index + 1}</th>
-                              <td>{user.id}</td>
-                              <td>{user.email}</td>
-                              <td>{user.username}</td>
-                              <td>{user.Group ? user.Group.name : ''}</td>
-                              <td>
-                                 <button
-                                    className="btn btn-warning mx-3"
-                                    onClick={() => {
-                                       handleOpenModalUser(user);
-                                    }}
-                                 >
-                                    Edit
-                                 </button>
-                                 <button
-                                    className="btn btn-danger"
-                                    onClick={() => {
-                                       handleOpenModal(user);
-                                    }}
-                                 >
-                                    Delete
-                                 </button>
-                              </td>
-                           </tr>
-                        ))
-                     ) : (
+               <div className="user-body">
+                  <table className="table table-bordered table-hover">
+                     <thead>
                         <tr>
-                           <td>Not Found Users</td>
+                           <th scope="col">No</th>
+                           <th scope="col">ID</th>
+                           <th scope="col">Email</th>
+                           <th scope="col">Username</th>
+                           <th scope="col">Group</th>
+                           <th scope="col">Actions</th>
                         </tr>
-                     )}
-                  </tbody>
-               </table>
-            </div>
-            {totalPages > 0 && (
-               <div className="user-footer">
-                  <ReactPaginate
-                     nextLabel="next >"
-                     onPageChange={handlePageClick}
-                     pageRangeDisplayed={3}
-                     marginPagesDisplayed={2}
-                     pageCount={totalPages}
-                     previousLabel="< previous"
-                     pageClassName="page-item"
-                     pageLinkClassName="page-link"
-                     previousClassName="page-item"
-                     previousLinkClassName="page-link"
-                     nextClassName="page-item"
-                     nextLinkClassName="page-link"
-                     breakLabel="..."
-                     breakClassName="page-item"
-                     breakLinkClassName="page-link"
-                     containerClassName="pagination"
-                     activeClassName="active"
-                     renderOnZeroPageCount={null}
-                  />
+                     </thead>
+                     <tbody>
+                        {listUsers && listUsers.length > 0 ? (
+                           listUsers.map((user, index) => (
+                              <tr key={`row-${index}`}>
+                                 <th scope="row">{(currentPage - 1) * currentLimit + index + 1}</th>
+                                 <td>{user.id}</td>
+                                 <td>{user.email}</td>
+                                 <td>{user.username}</td>
+                                 <td>{user.Group ? user.Group.name : ''}</td>
+                                 <td>
+                                    <span
+                                       className="edit"
+                                       onClick={() => {
+                                          handleOpenModalUser(user);
+                                       }}
+                                    >
+                                       <i className="fa fa-pencil"></i>
+                                    </span>
+                                    <span
+                                       className="delete"
+                                       onClick={() => {
+                                          handleOpenModal(user);
+                                       }}
+                                    >
+                                       <i className="fa fa-trash"></i>
+                                    </span>
+                                 </td>
+                              </tr>
+                           ))
+                        ) : (
+                           <tr>
+                              <td>Not Found Users</td>
+                           </tr>
+                        )}
+                     </tbody>
+                  </table>
                </div>
-            )}
+               {totalPages > 0 && (
+                  <div className="user-footer">
+                     <ReactPaginate
+                        nextLabel="next >"
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={3}
+                        marginPagesDisplayed={2}
+                        pageCount={totalPages}
+                        previousLabel="< previous"
+                        pageClassName="page-item"
+                        pageLinkClassName="page-link"
+                        previousClassName="page-item"
+                        previousLinkClassName="page-link"
+                        nextClassName="page-item"
+                        nextLinkClassName="page-link"
+                        breakLabel="..."
+                        breakClassName="page-item"
+                        breakLinkClassName="page-link"
+                        containerClassName="pagination"
+                        activeClassName="active"
+                        renderOnZeroPageCount={null}
+                     />
+                  </div>
+               )}
+            </div>
+            <ModalDelete
+               show={showModalDelete}
+               handleClose={handleCloseModal}
+               info={{ title: 'Confirm Delete User', body: 'Are you sure to delete this user?' }}
+               handleConfirm={handleDelete}
+               data={dataModal}
+            />
+            <ModalUser
+               showModalUser={showModalUser}
+               setShowModalUser={setShowModalUser}
+               action={actionModalUser}
+               dataModal={dataModal}
+               fetchUsers={fetchUsers}
+            />
          </div>
-         <ModalDelete
-            show={showModalDelete}
-            handleClose={handleCloseModal}
-            info={{ title: 'Confirm Delete User', body: 'Are you sure to delete this user?' }}
-            handleConfirm={handleDelete}
-            data={dataModal}
-         />
-         <ModalUser
-            showModalUser={showModalUser}
-            setShowModalUser={setShowModalUser}
-            action={actionModalUser}
-            dataModal={dataModal}
-            fetchUsers={fetchUsers}
-         />
       </>
    );
 }

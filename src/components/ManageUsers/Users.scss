@@ -3,3 +3,17 @@
       background-color: white;
    }
 }
+
+.user-body {
+   .table {
+      .delete {
+         color: red;
+         cursor: pointer;
+      }
+      .edit {
+         cursor: pointer;
+         color: orange;
+         margin-right: 15px;
+      }
+   }
+}
