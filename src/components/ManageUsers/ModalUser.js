@@ -17,7 +17,7 @@ function ModalUser(props) {
       password: '',
       address: '',
       sex: '',
-      group: '',
+      group: '1',
    };
 
    const validInputsDefault = {
@@ -39,14 +39,13 @@ function ModalUser(props) {
    };
    const handleShow = () => setShowModalUser(true);
 
-   console.log(userData);
    useEffect(() => {
       getGroups();
    }, []);
 
    useEffect(() => {
       if (action === 'UPDATE') {
-         setUserData({ ...dataModal, group: dataModal.Group ? dataModal.Group.id : '' });
+         setUserData({ ...dataModal, group: dataModal.Group ? dataModal.Group.id : '1' });
       } else {
          setUserData(defaultUserData);
       }
@@ -54,14 +53,14 @@ function ModalUser(props) {
 
    const getGroups = async () => {
       let response = await fetchAllGroups();
-      if (response && response.data && +response.data.EC === 0) {
-         setGroups(response.data.DT);
-         if (response.data.DT && response.data.DT.length > 0) {
-            let groups = response.data.DT;
+      if (response && +response.EC === 0) {
+         setGroups(response.DT);
+         if (response.DT && response.DT.length > 0) {
+            let groups = response.DT;
             setUserData({ ...userData, group: groups[0].id });
          }
       } else {
-         toast.error(response.data.EM);
+         toast.error(response.EM);
       }
    };
 
@@ -98,15 +97,15 @@ function ModalUser(props) {
             action === 'CREATE'
                ? await createNewUser({ ...userData, groupId: userData['group'] })
                : await updateUser({ ...userData, groupId: userData['group'] });
-         if (response.data && +response.data.EC === 0) {
-            toast.success(response.data.EM);
+         if (response && +response.EC === 0) {
+            toast.success(response.EM);
             handleClose();
             setUserData({ ...userData, group: groups && groups.length > 0 ? groups[0].id : '' });
             await props.fetchUsers();
-         } else if (response.data && response.data.EC !== 0) {
-            toast.error(response.data.EM);
+         } else if (response && response.EC !== 0) {
+            toast.error(response.EM);
             let _validInputs = _.cloneDeep(validInputsDefault);
-            _validInputs[response.data.DT] = false;
+            _validInputs[response.DT] = false;
             setValidInputs(_validInputs);
          }
       }

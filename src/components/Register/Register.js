@@ -63,7 +63,7 @@ function Register() {
          //call api register
          let response = await registerNewUser(email, username, phone, password);
          console.log('>>> check response register: ', response);
-         let serverData = response && response.data ? response.data : null;
+         let serverData = response ? response : null;
          if (serverData && +serverData.EC === 0) {
             toast.success(serverData.EM);
          } else {
