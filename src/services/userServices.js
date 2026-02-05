@@ -19,6 +19,11 @@ export const deleteUser = (user) => {
 export const createNewUser = (userData) => {
    return axios.post(`http://localhost:8080/api/v1/users/create`, { ...userData });
 };
+
+export const updateUser = (userData) => {
+   return axios.put(`http://localhost:8080/api/v1/users/update`, { ...userData });
+};
+
 export const fetchAllGroups = () => {
    return axios.get(`http://localhost:8080/api/v1/group/read`);
 };

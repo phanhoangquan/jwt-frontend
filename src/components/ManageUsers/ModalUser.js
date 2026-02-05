@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { toast } from 'react-toastify';
-import { fetchAllGroups, createNewUser } from '../../services/userServices';
+import { fetchAllGroups, createNewUser, updateUser } from '../../services/userServices';
 import _ from 'lodash';
 
 function ModalUser(props) {
@@ -73,7 +73,10 @@ function ModalUser(props) {
 
    const checkValidInputs = () => {
       setValidInputs(validInputsDefault);
-      let arr = ['email', 'phone', 'username', 'password', 'group'];
+      let arr =
+         action === 'CREATE'
+            ? ['email', 'phone', 'username', 'password', 'group']
+            : ['email', 'phone', 'username', 'group'];
       let check = true;
       for (let i = 0; i < arr.length; i++) {
          if (!userData[arr[i]]) {
@@ -91,11 +94,14 @@ function ModalUser(props) {
    const handleConfirmUser = async () => {
       let check = checkValidInputs();
       if (check) {
-         let response = await createNewUser({ ...userData, groupId: userData['group'] });
+         let response =
+            action === 'CREATE'
+               ? await createNewUser({ ...userData, groupId: userData['group'] })
+               : await updateUser({ ...userData, groupId: userData['group'] });
          if (response.data && +response.data.EC === 0) {
             toast.success(response.data.EM);
             handleClose();
-            setUserData({ ...userData, group: groups[0].id });
+            setUserData({ ...userData, group: groups && groups.length > 0 ? groups[0].id : '' });
             await props.fetchUsers();
          } else if (response.data && response.data.EC !== 0) {
             toast.error(response.data.EM);
